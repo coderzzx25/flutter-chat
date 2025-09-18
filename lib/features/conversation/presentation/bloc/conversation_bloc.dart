@@ -1,0 +1,44 @@
+// 9
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/core/socket_service.dart';
+import 'package:flutter_chat/features/conversation/domain/usecases/fetch_conversation_use_case.dart';
+import 'package:flutter_chat/features/conversation/presentation/bloc/conversation_event.dart';
+import 'package:flutter_chat/features/conversation/presentation/bloc/conversation_state.dart';
+
+class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
+  final FetchConversationUseCase fetchConversationUseCase;
+  final SocketService _socketService = SocketService();
+
+  ConversationBloc({required this.fetchConversationUseCase})
+    : super(ConversationInitial()) {
+    on<FetchConversationEvent>(_onFetchConversations);
+    _initializeSocketListeners();
+  }
+
+  void _initializeSocketListeners() {
+    try {
+      _socketService.socket.on('conversationUpdated', _onConversationUpdated);
+    } catch (e) {
+      print('Error initializing socket listeners: $e');
+    }
+  }
+
+  Future<void> _onFetchConversations(
+    FetchConversationEvent event,
+    Emitter<ConversationState> emit,
+  ) async {
+    emit(ConversationLoading());
+
+    try {
+      final conversations = await fetchConversationUseCase();
+      emit(ConversationSuccess(conversations));
+    } catch (e) {
+      print('Error fetching conversations: $e');
+      emit(ConversationError(message: 'Failed to load conversations'));
+    }
+  }
+
+  void _onConversationUpdated(data) {
+    add(FetchConversationEvent());
+  }
+}
