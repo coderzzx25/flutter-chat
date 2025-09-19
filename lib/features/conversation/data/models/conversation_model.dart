@@ -7,6 +7,7 @@ class ConversationModel extends ConversationEntity {
     required super.participantName,
     required super.lastMessage,
     required super.lastMessageTime,
+    required super.online,
   });
 
   factory ConversationModel.fromJson(Map<String, dynamic> json) {
@@ -15,6 +16,7 @@ class ConversationModel extends ConversationEntity {
       participantName: json['participant_name'],
       lastMessage: json['last_message'],
       lastMessageTime: json['last_message_time'],
+      online: json['online'],
     );
   }
 }

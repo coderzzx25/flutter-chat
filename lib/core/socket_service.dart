@@ -14,6 +14,8 @@ class SocketService {
 
   Future<void> initSocket() async {
     String token = await _storage.read(key: 'token') ?? '';
+    final senderId = await _storage.read(key: 'userId');
+    var userId = int.tryParse(senderId ?? '') ?? 0;
     _socket = IO.io(
       'http://localhost:3000',
       IO.OptionBuilder()
@@ -27,6 +29,9 @@ class SocketService {
 
     _socket.onConnect((_) {
       print('connected');
+      if (userId > 0) {
+        _socket.emit('userOnline', userId);
+      }
     });
   }
 

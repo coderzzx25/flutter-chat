@@ -97,6 +97,7 @@ class _ConversationPageState extends State<ConversationPage> {
                             conversation.participantName,
                             conversation.lastMessage,
                             conversation.lastMessageTime,
+                            conversation.online,
                           ),
                         );
                       },
@@ -145,12 +146,38 @@ class _ConversationPageState extends State<ConversationPage> {
     );
   }
 
-  Widget _buildMessageTitle(String name, String message, String time) {
+  Widget _buildMessageTitle(
+    String name,
+    String message,
+    String time,
+    bool online,
+  ) {
     return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      leading: CircleAvatar(
-        radius: 30,
-        backgroundImage: NetworkImage("https://picsum.photos/200"),
+      leading: Stack(
+        children: [
+          CircleAvatar(
+            radius: 30,
+            backgroundImage: NetworkImage("https://picsum.photos/200"),
+          ),
+          if (online)
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: Container(
+                width: 14,
+                height: 14,
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 2,
+                  ), // 白色边框，显得清晰
+                ),
+              ),
+            ),
+        ],
       ),
       title: Text(
         name,

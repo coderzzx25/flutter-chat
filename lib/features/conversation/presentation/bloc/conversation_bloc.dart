@@ -18,6 +18,7 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
   void _initializeSocketListeners() {
     try {
       _socketService.socket.on('conversationUpdated', _onConversationUpdated);
+      _socketService.socket.on('userStatus', _onUserStatusChanged);
     } catch (e) {
       print('Error initializing socket listeners: $e');
     }
@@ -39,6 +40,10 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
   }
 
   void _onConversationUpdated(data) {
+    add(FetchConversationEvent());
+  }
+
+  void _onUserStatusChanged(data) {
     add(FetchConversationEvent());
   }
 }
