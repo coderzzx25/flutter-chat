@@ -61,7 +61,7 @@ class _ContactsPageState extends State<ContactsPage> {
                     onTap: () {
                       BlocProvider.of<ContactsBloc>(context).add(
                         CheckOrCreateConversationsEvent(
-                          contact.id,
+                          contact.contactId,
                           contact.username,
                         ),
                       );

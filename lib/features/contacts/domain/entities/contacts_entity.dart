@@ -1,10 +1,10 @@
 class ContactsEntity {
-  final int id;
+  final int contactId;
   final String username;
   final String email;
 
   ContactsEntity({
-    required this.id,
+    required this.contactId,
     required this.username,
     required this.email,
   });

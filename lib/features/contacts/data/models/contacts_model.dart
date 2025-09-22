@@ -2,14 +2,14 @@ import 'package:flutter_chat/features/contacts/domain/entities/contacts_entity.d
 
 class ContactsModel extends ContactsEntity {
   ContactsModel({
-    required super.id,
+    required super.contactId,
     required super.username,
     required super.email,
   });
 
   factory ContactsModel.fromJson(Map<String, dynamic> json) {
     return ContactsModel(
-      id: json['contact_id'],
+      contactId: json['contact_id'],
       username: json['username'],
       email: json['email'],
     );
