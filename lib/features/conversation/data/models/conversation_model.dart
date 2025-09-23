@@ -7,6 +7,7 @@ class ConversationModel extends ConversationEntity {
     required super.participantName,
     required super.lastMessage,
     required super.lastMessageTime,
+    required super.unreadCount,
     required super.online,
   });
 
@@ -16,6 +17,7 @@ class ConversationModel extends ConversationEntity {
       participantName: json['participant_name'],
       lastMessage: json['last_message'],
       lastMessageTime: json['last_message_time'],
+      unreadCount: json['unread_count'],
       online: json['online'],
     );
   }

@@ -25,6 +25,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(ChatLoading());
 
     try {
+      final senderId = await _storage.read(key: 'userId');
+      var userId = int.tryParse(senderId ?? '') ?? 0;
       final message = await fetchMessageUseCase(event.conversationId);
       _messages.clear();
       _messages.addAll(message);
@@ -32,7 +34,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
       _socketService.socket.off('newMessage'); // 修复发送消息重复的问题
 
-      _socketService.socket.emit('joinConversation', event.conversationId);
+      _socketService.socket.emit('joinConversation', {
+        'conversationId': event.conversationId,
+        'userId': userId,
+      });
+
       _socketService.socket.on(
         'newMessage',
         (data) => {add(ReceiveMessageEvent(data))},

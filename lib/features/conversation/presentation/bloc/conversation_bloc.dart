@@ -19,6 +19,7 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
     try {
       _socketService.socket.on('conversationUpdated', _onConversationUpdated);
       _socketService.socket.on('userStatus', _onUserStatusChanged);
+      _socketService.socket.on('unreadCountUpdate', _onUnreadUpdated);
     } catch (e) {
       print('Error initializing socket listeners: $e');
     }
@@ -45,5 +46,9 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
 
   void _onUserStatusChanged(data) {
     add(FetchConversationEvent());
+  }
+
+  void _onUnreadUpdated(data) {
+    add(FetchConversationEvent()); // 可优化成只更新特定对话的未读消息数
   }
 }

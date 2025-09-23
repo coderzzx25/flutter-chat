@@ -98,6 +98,7 @@ class _ConversationPageState extends State<ConversationPage> {
                             conversation.lastMessage,
                             conversation.lastMessageTime,
                             conversation.online,
+                            conversation.unreadCount,
                           ),
                         );
                       },
@@ -151,6 +152,7 @@ class _ConversationPageState extends State<ConversationPage> {
     String message,
     String time,
     bool online,
+    int unreadCount,
   ) {
     return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -174,6 +176,29 @@ class _ConversationPageState extends State<ConversationPage> {
                     color: Colors.white,
                     width: 2,
                   ), // 白色边框，显得清晰
+                ),
+              ),
+            ),
+          if (unreadCount > 0)
+            Positioned(
+              right: -2,
+              top: -2,
+              child: Container(
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                constraints: BoxConstraints(minWidth: 20, minHeight: 20),
+                child: Center(
+                  child: Text(
+                    unreadCount > 99 ? '99+' : unreadCount.toString(),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ),

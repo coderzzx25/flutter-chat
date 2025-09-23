@@ -4,6 +4,7 @@ class ConversationEntity {
   final String participantName;
   final String lastMessage;
   final String lastMessageTime;
+  final int unreadCount;
   final bool online;
 
   ConversationEntity({
@@ -11,6 +12,7 @@ class ConversationEntity {
     required this.participantName,
     required this.lastMessage,
     required this.lastMessageTime,
+    required this.unreadCount,
     required this.online,
   });
 }
