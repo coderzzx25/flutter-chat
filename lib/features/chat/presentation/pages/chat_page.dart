@@ -17,6 +17,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   final _storage = FlutterSecureStorage();
   int userId = 0;
 
@@ -40,6 +41,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -51,7 +53,21 @@ class _ChatPageState extends State<ChatPage> {
       ).add(SendMessageEvent(widget.conversationId, content));
 
       _messageController.clear();
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        }
+      });
     }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    });
   }
 
   @override
@@ -79,7 +95,9 @@ class _ChatPageState extends State<ChatPage> {
                 if (state is ChatLoading) {
                   return Center(child: CircularProgressIndicator());
                 } else if (state is ChatSuccess) {
+                  _scrollToBottom();
                   return ListView.builder(
+                    controller: _scrollController,
                     padding: EdgeInsets.all(20),
                     itemCount: state.messages.length,
                     itemBuilder: (context, index) {
