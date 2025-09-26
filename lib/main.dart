@@ -10,7 +10,6 @@ import 'package:flutter_chat/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:flutter_chat/features/contacts/presentation/bloc/contacts_bloc.dart';
 import 'package:flutter_chat/features/conversation/presentation/bloc/conversation_bloc.dart';
 import 'package:flutter_chat/features/conversation/presentation/pages/conversation_page.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,15 +18,11 @@ void main() async {
 
   setupDependencies();
 
-  final storage = FlutterSecureStorage();
-  String token = await storage.read(key: 'token') ?? '';
-
-  runApp(MainApp(isLoggedIn: token.isEmpty ? false : true));
+  runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
-  final bool isLoggedIn;
-  const MainApp({super.key, required this.isLoggedIn});
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +46,7 @@ class MainApp extends StatelessWidget {
       child: MaterialApp(
         theme: AppTheme.darkTheme,
         debugShowCheckedModeBanner: false,
-        home: isLoggedIn ? ConversationPage() : LoginPage(),
+        home: LoginPage(),
         routes: {
           '/login': (context) => BlocProvider.value(
             value: BlocProvider.of<AuthBloc>(context),
