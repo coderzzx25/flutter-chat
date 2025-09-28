@@ -68,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
               SizedBox(height: 20),
               BlocConsumer<AuthBloc, AuthState>(
                 listener: (context, state) {
-                  if (state is AuthSuccess) {
+                  if (state is AuthAuthenticated) {
                     Navigator.pushNamed(context, '/login');
                   } else if (state is AuthFailure) {
                     ScaffoldMessenger.of(

@@ -4,11 +4,14 @@ class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
-class AuthSuccess extends AuthState {
-  final String message;
+class AuthAuthenticated extends AuthState {
+  final String token;
+  final int userId;
 
-  AuthSuccess({required this.message});
+  AuthAuthenticated({required this.token, required this.userId});
 }
+
+class AuthUnauthenticated extends AuthState {}
 
 class AuthFailure extends AuthState {
   final String message;

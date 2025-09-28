@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 20),
               BlocConsumer<AuthBloc, AuthState>(
                 listener: (context, state) {
-                  if (state is AuthSuccess) {
+                  if (state is AuthAuthenticated) {
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       '/conversation',

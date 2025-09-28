@@ -4,6 +4,8 @@ import 'package:flutter_chat/core/socket_service.dart';
 import 'package:flutter_chat/core/theme.dart';
 import 'package:flutter_chat/di_container.dart';
 import 'package:flutter_chat/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:flutter_chat/features/auth/presentation/bloc/auth_event.dart';
+import 'package:flutter_chat/features/auth/presentation/bloc/auth_state.dart';
 import 'package:flutter_chat/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter_chat/features/auth/presentation/pages/register_page.dart';
 import 'package:flutter_chat/features/chat/presentation/bloc/chat_bloc.dart';
@@ -32,7 +34,10 @@ class MainApp extends StatelessWidget {
           create: (_) => AuthBloc(registerUseCase: sl(), loginUseCase: sl()),
         ),
         BlocProvider(
-          create: (_) => ConversationBloc(fetchConversationUseCase: sl()),
+          create: (context) => ConversationBloc(
+            fetchConversationUseCase: sl(),
+            authBloc: context.read<AuthBloc>(),
+          ),
         ),
         BlocProvider(create: (_) => ChatBloc(fetchMessageUseCase: sl())),
         BlocProvider(
@@ -46,7 +51,18 @@ class MainApp extends StatelessWidget {
       child: MaterialApp(
         theme: AppTheme.darkTheme,
         debugShowCheckedModeBanner: false,
-        home: LoginPage(),
+        home: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state is AuthInitial) {
+              context.read<AuthBloc>().add(AppStarted());
+            } else if (state is AuthLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is AuthAuthenticated) {
+              return ConversationPage();
+            }
+            return LoginPage();
+          },
+        ),
         routes: {
           '/login': (context) => BlocProvider.value(
             value: BlocProvider.of<AuthBloc>(context),

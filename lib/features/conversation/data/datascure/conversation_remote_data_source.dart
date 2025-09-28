@@ -4,6 +4,14 @@ import 'package:flutter_chat/features/conversation/data/models/conversation_mode
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
+class UnauthorizedException implements Exception {
+  final String message;
+  UnauthorizedException([this.message = "Unauthorized"]);
+
+  @override
+  String toString() => "UnauthorizedException: $message";
+}
+
 class ConversationRemoteDataSource {
   final String baseUrl;
   final _storage = FlutterSecureStorage();
@@ -23,6 +31,8 @@ class ConversationRemoteDataSource {
     if (response.statusCode == 200) {
       List data = jsonDecode(response.body);
       return data.map((json) => ConversationModel.fromJson(json)).toList();
+    } else if (response.statusCode == 401) {
+      throw UnauthorizedException();
     } else {
       throw Exception('Failed to fetch conversation');
     }
