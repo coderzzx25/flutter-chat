@@ -15,3 +15,8 @@ class ReceiveMessageEvent extends ChatEvent {
   final Map<String, dynamic> message;
   ReceiveMessageEvent(this.message);
 }
+
+class MarkAsReadEvent extends ChatEvent {
+  final int conversationId;
+  MarkAsReadEvent(this.conversationId);
+}

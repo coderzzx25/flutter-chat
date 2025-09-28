@@ -72,53 +72,64 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          context.read<ChatBloc>().add(MarkAsReadEvent(widget.conversationId));
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage('https://picsum.photos/200'),
+              ),
+              SizedBox(width: 10),
+              Text(style: Theme.of(context).textTheme.titleMedium, widget.meta),
+            ],
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          actions: [IconButton(onPressed: () {}, icon: Icon(Icons.menu))],
+        ),
+        body: Column(
           children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage('https://picsum.photos/200'),
+            Expanded(
+              child: BlocBuilder<ChatBloc, ChatState>(
+                builder: (context, state) {
+                  if (state is ChatLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state is ChatSuccess) {
+                    _scrollToBottom();
+                    return ListView.builder(
+                      controller: _scrollController,
+                      padding: EdgeInsets.all(20),
+                      itemCount: state.messages.length,
+                      itemBuilder: (context, index) {
+                        final message = state.messages[index];
+                        final isSentMessage = message.senderId == userId;
+                        if (isSentMessage) {
+                          return _buildSentMessage(message.content, context);
+                        } else {
+                          return _buildReceivedMessage(
+                            message.content,
+                            context,
+                          );
+                        }
+                      },
+                    );
+                  } else if (state is ChatError) {
+                    return Center(child: Text(state.message));
+                  }
+                  return Center(child: Text('No messages'));
+                },
+              ),
             ),
-            SizedBox(width: 10),
-            Text(style: Theme.of(context).textTheme.titleMedium, widget.meta),
+            _buildMessageInput(),
           ],
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.menu))],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: BlocBuilder<ChatBloc, ChatState>(
-              builder: (context, state) {
-                if (state is ChatLoading) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (state is ChatSuccess) {
-                  _scrollToBottom();
-                  return ListView.builder(
-                    controller: _scrollController,
-                    padding: EdgeInsets.all(20),
-                    itemCount: state.messages.length,
-                    itemBuilder: (context, index) {
-                      final message = state.messages[index];
-                      final isSentMessage = message.senderId == userId;
-                      if (isSentMessage) {
-                        return _buildSentMessage(message.content, context);
-                      } else {
-                        return _buildReceivedMessage(message.content, context);
-                      }
-                    },
-                  );
-                } else if (state is ChatError) {
-                  return Center(child: Text(state.message));
-                }
-                return Center(child: Text('No messages'));
-              },
-            ),
-          ),
-          _buildMessageInput(),
-        ],
       ),
     );
   }

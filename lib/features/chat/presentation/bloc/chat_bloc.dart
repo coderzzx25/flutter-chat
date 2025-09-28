@@ -16,6 +16,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<LoadMessageEvent>(_onLoadMessage);
     on<SendMessageEvent>(_onSendMessage);
     on<ReceiveMessageEvent>(_onReceiveMessage);
+    on<MarkAsReadEvent>(_onMarkAsRead);
   }
 
   Future<void> _onLoadMessage(
@@ -76,5 +77,18 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     );
     _messages.add(message);
     emit(ChatSuccess(messages: List.from(_messages)));
+  }
+
+  Future<void> _onMarkAsRead(
+    MarkAsReadEvent event,
+    Emitter<ChatState> emit,
+  ) async {
+    final senderId = await _storage.read(key: 'userId');
+    var userId = int.tryParse(senderId ?? '') ?? 0;
+
+    _socketService.socket.emit('markAsRead', {
+      'conversationId': event.conversationId,
+      'userId': userId,
+    });
   }
 }
